@@ -45,7 +45,7 @@ name: Build and Deploy the SVIX Monitor
 #                 Databento's historical feed has them by this hour.
 on:
   schedule:
-    - cron: '0 0 * * *'  # TODO: every day at 14:30 UTC, not midnight; the comment above explains the five fields
+    - cron: '30 14 * * *' 
   workflow_dispatch: {}  # the manual "Run workflow" button
   push:
     branches: [main]
@@ -53,7 +53,7 @@ on:
 # GITHUB_TOKEN needs write access to push the history branch and to
 # force-push the gh-pages branch.
 permissions:
-  contents: read  # TODO: the job pushes the history branch and force-pushes gh-pages. Is read enough?
+  contents: write
 
 # Never let two deploys interleave their pushes (the daily cron racing a
 # push to main). The newest run supersedes an in-flight one.
