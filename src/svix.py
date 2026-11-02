@@ -52,7 +52,7 @@ def svix_squared(cdf):
     Under a flat smile the return is lognormal and var*(R / R_f) is
     exp(sigma^2 tau) - 1, so SVIX^2 is (exp(sigma^2 tau) - 1) / tau, a
     little above sigma^2:
-
+    
     >>> import numpy as np, pandas as pd
     >>> from rnd import risk_neutral_cdf
     >>> moneyness = np.linspace(0.5, 1.5, 9)
@@ -61,11 +61,16 @@ def svix_squared(cdf):
     >>> round(svix_squared(risk_neutral_cdf(smile, rate=0.03)), 4)
     0.0401
     """
-    ## TODO: Implement this function as specified in the docstring above.
-    raise NotImplementedError(
-        "Implement svix_squared (see HOMEWORK INSTRUCTIONS at the top of this file)"
-    )
+    R_f = cdf.forward
+    tau = cdf.maturity_years
+    xp = np.append(cdf.grid[cdf.grid < R_f], R_f)
+    yp = np.append(cdf.put_grid[:len(xp) - 1], np.interp(R_f, cdf.grid, cdf.put_grid))
+    xc = np.insert(cdf.grid[cdf.grid > R_f], 0, R_f)
+    yc = np.insert(cdf.call_grid[len(cdf.call_grid) - (len(xc) - 1):], 0,
+                   np.interp(R_f, cdf.grid, cdf.call_grid))
 
+    return (2 / (R_f*tau)) * (np.trapezoid(yp, x=xp) + np.trapezoid(yc, x=xc))
+    
 
 def interpolate_variance(svix2_near, tau_near, svix2_far, tau_far, horizon_years=HORIZON_DAYS / 365.0):
     """Constant-maturity SVIX^2 from two bracketing expirations.
