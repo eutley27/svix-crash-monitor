@@ -107,14 +107,8 @@ jobs:
         # source being down or a bug.
         continue-on-error: true
         env:
-          # TODO: the pull needs your Databento key. It must come from the
-          # repository's secret store, never from this file. See
-          # https://docs.github.com/en/actions/security-for-github-actions/security-guides/using-secrets-in-github-actions
-          DATABENTO_API_KEY: TODO
-        # TODO: the command that pulls the latest session, adds its row to the
-        # history, and rebuilds the page (the daily update task in dodo.py),
-        # run through uv.
-        run: TODO
+          DATABENTO_API_KEY: ${{ secrets.DATABENTO_API_KEY }}
+        run: uv run doit latest
 
       - name: Tell an outage from a bug
         # The pulls retry server and network errors, waiting longer each
@@ -178,7 +172,7 @@ jobs:
         run: |
           # Orphan branch = no parent commits, so gh-pages always contains
           # exactly ONE commit no matter how many times this workflow runs.
-          git checkout --orphan TODO  # TODO: the branch GitHub Pages serves the page from
+          git checkout --orphan gh-pages
           git rm -rf --quiet .
           # git rm only removes *tracked* files; also purge untracked and
           # gitignored build leftovers (_data/, _output/, docs/, .venv/) so
@@ -187,4 +181,4 @@ jobs:
           cp -r "$RUNNER_TEMP/site/." .
           git add -A
           git commit -m "Deploy SVIX monitor $(date -u +'%Y-%m-%d %H:%M UTC')"
-          git push --force origin TODO  # TODO: the same branch
+          git push --force origin gh-pages
