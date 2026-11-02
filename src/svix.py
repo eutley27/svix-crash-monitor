@@ -59,7 +59,7 @@ def svix_squared(cdf):
     >>> smile = pd.DataFrame({"days_to_maturity": 30, "moneyness": moneyness,
     ...     "implied_vol": 0.20, "cp_flag": np.where(moneyness <= 1.0, "P", "C")})
     >>> round(svix_squared(risk_neutral_cdf(smile, rate=0.03)), 4)
-    0.0401
+    np.float64(0.0401)
     """
     R_f = cdf.forward
     tau = cdf.maturity_years
